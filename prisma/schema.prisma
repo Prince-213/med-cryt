@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  kd         String
+  vitalSigns VitalSigns[] // One-to-Many (historical vitals)
+  email      String
+  name       String
+  age        String
+  adress     String
+  gender     String
+}
+
+model VitalSigns {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  patientId     String   @db.ObjectId
+  Patient       Patient  @relation(fields: [patientId], references: [id])
+  recordedAt    DateTime @default(now())
+  bloodPressure String // "120/80 mmHg"
+  heartRate     String // BPM
+  temperature   String // e.g., 98.6 (Fahrenheit)
+
+  height String? // in cm
+  weight String? // in kg
+  bmi    String? // Optional (can be auto-calculated)
+}
