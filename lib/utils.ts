@@ -19,7 +19,10 @@ function base64ToArrayBuffer(base64: string) {
 }
 
 // Encrypt a string
-export async function encryptString(plaintext: string | undefined, password: string | undefined) {
+export async function encryptString(
+  plaintext: string | undefined,
+  password: string | undefined
+) {
   const encoder = new TextEncoder();
   const plaintextBytes = encoder.encode(plaintext);
 
@@ -71,7 +74,10 @@ export async function encryptString(plaintext: string | undefined, password: str
 }
 
 // Decrypt a string
-export async function decryptString(combinedBase64: string, password: string | undefined) {
+export async function decryptString(
+  combinedBase64: string,
+  password: string | undefined
+) {
   const combined = base64ToArrayBuffer(combinedBase64);
 
   // Extract salt (first 16 bytes), IV (next 12 bytes), and ciphertext
@@ -130,7 +136,7 @@ export const getBaseUrl = (): string => {
   const siteUrl =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://medical-dash-gamma.vercel.app";
+      : "https://med-cryt.vercel.app";
 
   return siteUrl;
 };
