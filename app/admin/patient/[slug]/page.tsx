@@ -5,25 +5,33 @@ import prisma from "@/lib/prisma";
 import React, { Suspense } from "react";
 import PatientSlug from "./(ui)/PatientSlug";
 
-const page = async ({ params }: { params: { slug: string } }) => {
-  const patientParam = await params;
+// For a dynamic route like [slug]/page.tsx
+
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
 
   const patientData = await prisma.patient.findUnique({
     where: {
-      id: patientParam.slug
+      id: slug
     },
     include: {
       vitalSigns: true
     }
   });
 
-  console.log(patientData);
+  if (!patientData) {
+    return <div>Patient not found</div>;
+    // Alternatively, you could redirect or throw notFound()
+    // throw new Error('Patient not found');
+    // or for Next.js 13+:
+    // notFound();
+  }
 
   return (
-    <div className=" p-10">
+    <div className="p-10">
       <Suspense
         fallback={
-          <div className=" w-full h-[40vh] rounded-2xl bg-gray-300 animate-pulse"></div>
+          <div className="w-full h-[40vh] rounded-2xl bg-gray-300 animate-pulse"></div>
         }
       >
         <PatientSlug patientData={patientData} />
@@ -32,4 +40,4 @@ const page = async ({ params }: { params: { slug: string } }) => {
   );
 };
 
-export default page;
+export default Page;

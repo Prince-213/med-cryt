@@ -1,5 +1,5 @@
 // Helper functions to convert between Base64 and Uint8Array
-function arrayBufferToBase64(buffer) {
+function arrayBufferToBase64(buffer: Uint8Array<ArrayBuffer>) {
   let binary = "";
   const bytes = new Uint8Array(buffer);
   for (const byte of bytes) {
@@ -8,7 +8,7 @@ function arrayBufferToBase64(buffer) {
   return btoa(binary);
 }
 
-function base64ToArrayBuffer(base64) {
+function base64ToArrayBuffer(base64: string) {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
@@ -19,7 +19,7 @@ function base64ToArrayBuffer(base64) {
 }
 
 // Encrypt a string
-export async function encryptString(plaintext, password) {
+export async function encryptString(plaintext: string | undefined, password: string | undefined) {
   const encoder = new TextEncoder();
   const plaintextBytes = encoder.encode(plaintext);
 
@@ -71,7 +71,7 @@ export async function encryptString(plaintext, password) {
 }
 
 // Decrypt a string
-export async function decryptString(combinedBase64, password) {
+export async function decryptString(combinedBase64: string, password: string | undefined) {
   const combined = base64ToArrayBuffer(combinedBase64);
 
   // Extract salt (first 16 bytes), IV (next 12 bytes), and ciphertext
