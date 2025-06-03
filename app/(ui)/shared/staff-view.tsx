@@ -11,10 +11,17 @@ import {
   TableRow,
   TextInput
 } from "flowbite-react";
-import { Eye, MoreVertical, PlusCircle, User } from "lucide-react";
+import {
+  Eye,
+  Loader2,
+  MoreVertical,
+  PlusCircle,
+  Trash,
+  User
+} from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 
-import { addVitals } from "@/lib/actions";
+import { addVitals, deleteRecord } from "@/lib/actions";
 import { GiHospitalCross } from "react-icons/gi";
 import { FaHandHoldingMedical } from "react-icons/fa";
 import Link from "next/link";
@@ -28,6 +35,22 @@ export function StaffComponentTable({ data }: { data: Patient[] }) {
   const [isPatOpen, setIsPatOpen] = useState(false);
 
   const [selectedId, setSelectedId] = useState("");
+
+  const [pend, setPend] = useState(false);
+
+  const removeRecord = async (id: string) => {
+    setPend(true);
+
+    try {
+      await deleteRecord(id);
+
+      toast.success("Record detleted successfully");
+    } catch {
+      toast.error("Error deleting record");
+    } finally {
+      setPend(false);
+    }
+  };
 
   const handlePatClose = () => setIsPatOpen(false);
   const content = ({ id, disabled }: { id: string; disabled: boolean }) => (
@@ -51,6 +74,20 @@ export function StaffComponentTable({ data }: { data: Patient[] }) {
       >
         <PlusCircle />
         <p>Add Medicals</p>
+      </button>
+      <button
+        disabled={pend}
+        onClick={() => {
+          setSelectedId(id);
+          removeRecord(id);
+        }}
+        className={`px-3 flex justify-between  hover:bg-gray-100 w-full items-center space-x-2 py-2`}
+      >
+        <div className=" flex items-center space-x-2">
+          <Trash />
+          <p>Delete Records</p>
+        </div>
+        {pend && <Loader2 className=" animate-spin" />}
       </button>
     </div>
   );

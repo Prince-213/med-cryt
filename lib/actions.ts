@@ -7,6 +7,7 @@ import { encryptString, getBaseUrl } from "./utils";
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 export async function createUser(prevState: any, formData: FormData) {
   const id3 = generateUniqueId({
@@ -40,7 +41,7 @@ export async function createUser(prevState: any, formData: FormData) {
       }
     });
 
-     try {
+    try {
       const response = await fetch(`${getBaseUrl()}/api/send`, {
         method: "POST",
         headers: {
@@ -150,3 +151,24 @@ export async function adminLogin(prevState: any, formData: FormData) {
   cookieStore.set("admin", "sdk23@ksjkfdka", { secure: true });
   redirect("/admin");
 }
+
+export const adminLogout = async () => {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("admin");
+  redirect("/");
+};
+
+export const deleteRecord = async (id: string) => {
+  try {
+    await prisma.patient.delete({
+      where: {
+        id
+      }
+    });
+
+    revalidatePath("/admin");
+  } catch (err) {
+    console.error(err);
+  }
+};
