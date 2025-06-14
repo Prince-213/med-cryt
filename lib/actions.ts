@@ -13,7 +13,7 @@ export async function createUser(prevState: any, formData: FormData) {
   const id3 = generateUniqueId({
     includeSymbols: ["@", "#", "|"],
     length: 10,
-    excludeSymbols: ["0"]
+    excludeSymbols: ["0"],
   });
 
   console.log(formData);
@@ -37,40 +37,42 @@ export async function createUser(prevState: any, formData: FormData) {
         email: email?.toString() || "",
         gender: gender?.toString() || "",
         age: age?.toString() || "",
-        adress: cryptAddress
-      }
+        adress: cryptAddress,
+      },
     });
 
     try {
       const response = await fetch(`${getBaseUrl()}/api/send`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: `${formData.get("name")?.toString()}`,
           email: `${formData.get("email")?.toString()}`,
-          message: `Welcome ${name?.toString()} to IMEDIC. Your Digital profile has been created. This is your decryption key ${id3}`
-        })
+          message: `Welcome ${name?.toString()} to IMEDIC. Your Digital profile has been created. This is your decryption key ${id3}`,
+        }),
       });
+
+      revalidatePath("/admin");
 
       if (response.ok) {
         console.log("Email sent successfully!");
 
         return {
-          message: "success"
+          message: "success",
         };
       } else {
         const errorDetails = await response.json();
         console.error("Error sending email:", errorDetails.message);
         return {
-          message: "wrong"
+          message: "wrong",
         };
       }
     } catch (error) {
       console.error("There was a problem sending the email:", error);
       return {
-        message: "wrong"
+        message: "wrong",
       };
     }
 
@@ -87,18 +89,18 @@ export async function addVitals(prevState: any, formData: FormData) {
 
     const key = await prisma.patient.findUnique({
       where: {
-        id: formData.get("id")?.toString() || ""
+        id: formData.get("id")?.toString() || "",
       },
       select: {
-        kd: true
-      }
+        kd: true,
+      },
     });
 
     const keyD = key?.kd;
 
     await prisma.patient.update({
       where: {
-        id: formData.get("id")?.toString() || ""
+        id: formData.get("id")?.toString() || "",
       },
       data: {
         vitalSigns: {
@@ -121,11 +123,14 @@ export async function addVitals(prevState: any, formData: FormData) {
               (await encryptString(formData.get("height")?.toString(), keyD)) ||
               "",
             bmi:
-              (await encryptString(formData.get("bmi")?.toString(), keyD)) || ""
-          }
-        }
-      }
+              (await encryptString(formData.get("bmi")?.toString(), keyD)) ||
+              "",
+          },
+        },
+      },
     });
+
+    revalidatePath("/admin");
 
     return { message: "success" };
   } catch (err) {
@@ -161,11 +166,18 @@ export const adminLogout = async () => {
 
 export const deleteRecord = async (id: string) => {
   try {
+    const result = await prisma.vitalSigns.deleteMany({
+      where: {
+        patientId: id,
+      },
+    });
+
     await prisma.patient.delete({
       where: {
-        id
-      }
+        id,
+      },
     });
+    console.log(`Deleted ${result.count} vital signs records`);
 
     revalidatePath("/admin");
   } catch (err) {

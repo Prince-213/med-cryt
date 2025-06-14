@@ -4,18 +4,17 @@ import SideBar from "../(ui)/shared/sidebar";
 import { Search, Plus, ChevronDown, User } from "lucide-react";
 
 import localFont from "next/font/local";
-import { Toaster } from "sonner";
 import LogoutButton from "./(ui)/LogoutButton";
 
 const myFont = localFont({
   src: "../(font)/Outfit-Variable.ttf",
   display: "swap",
-  variable: "--my-font"
+  variable: "--my-font",
 });
 
 export const metadata: Metadata = {
   title: "Medical Encrytion",
-  description: "State of the Art Medical Encryption Software"
+  description: "State of the Art Medical Encryption Software",
 };
 
 /* const getStaffs = async () => {
@@ -41,7 +40,7 @@ export const metadata: Metadata = {
  */
 
 export default async function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -57,7 +56,6 @@ export default async function RootLayout({
       <body
         className={`${myFont.className} w-full overflow-hidden bg-white h-screen`}
       >
-        <Toaster richColors position="bottom-left" />
         <div className=" w-full h-screen flex">
           <SideBar />
 

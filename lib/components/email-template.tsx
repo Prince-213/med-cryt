@@ -6,13 +6,14 @@ import {
   Link,
   Preview,
   Section,
-  Text
+  Text,
 } from "@react-email/components";
 import * as React from "react";
 import { render } from "@react-email/render";
 import { LuStethoscope } from "react-icons/lu";
+import { getBaseUrl } from "../utils";
 
-interface GithubAccessTokenEmailProps {
+interface MedicalNotificationEmailProps {
   name?: string;
   email?: string;
   message?: string;
@@ -21,34 +22,57 @@ interface GithubAccessTokenEmailProps {
 export const EmailTemplate = ({
   name,
   email,
-  message
-}: GithubAccessTokenEmailProps) => (
+  message,
+}: MedicalNotificationEmailProps) => (
   <Html>
     <Head />
-    <Preview>A new notification in Medical Lab {name || ""} </Preview>
+    <Preview>New notification from MediLab {name ? `for ${name}` : ""}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <div className=" text-4xl text-blue-500 flex items-center space-x-2">
-          <LuStethoscope size={50} color="blue" />
-          <h1>MediLab</h1>
-        </div>
+        {/* Header with logo */}
+        <Section style={header}>
+          <div style={logoContainer}>
+            <LuStethoscope size={32} color="#3b82f6" />
+            <Text style={logoText}>MediLab</Text>
+          </div>
+        </Section>
 
-        <Text style={title}>
-          <strong>@{email}</strong>
-          account.
-        </Text>
+        {/* Main content */}
+        <Section style={content}>
+          <Text style={greeting}>Hello {name || "there"},</Text>
 
-        <Section style={section}>
-          <Text style={text}>Greetings!</Text>
-          <Text style={text}>{message}</Text>
-          {/* 
-          <Button style={button}>View your token</Button> */}
-          <Link href="https://medical-dash-gamma.vercel.app">
+          <Text style={paragraph}>
+            You have a new notification from your MediLab account{" "}
+            <strong>{email}</strong>:
+          </Text>
+
+          <Section style={messageBox}>
+            <Text style={messageText}>{message}</Text>
+          </Section>
+
+          <Link href={getBaseUrl()} style={button}>
             Go to Dashboard
           </Link>
         </Section>
 
-        <Text style={footer}>Medilab &copy;</Text>
+        {/* Footer */}
+        <Section style={footer}>
+          <Text style={footerText}>MediLab Healthcare Services</Text>
+          <Text style={footerSmallText}>Providing quality care since 2023</Text>
+          <Text style={footerLinks}>
+            <Link href={`${getBaseUrl()}/contact`} style={link}>
+              Contact Us
+            </Link>{" "}
+            •
+            <Link href={`${getBaseUrl()}/privacy`} style={link}>
+              Privacy Policy
+            </Link>{" "}
+            •
+            <Link href={`${getBaseUrl()}/terms`} style={link}>
+              Terms
+            </Link>
+          </Text>
+        </Section>
       </Container>
     </Body>
   </Html>
@@ -59,7 +83,7 @@ export default EmailTemplate;
 export const emailHTML = async ({
   name,
   email,
-  message
+  message,
 }: {
   name: string;
   email: string;
@@ -67,48 +91,116 @@ export const emailHTML = async ({
 }) =>
   await render(<EmailTemplate name={name} email={email} message={message} />);
 
+// Styling
 const main = {
-  backgroundColor: "#ffffff",
-  color: "#24292e",
+  backgroundColor: "#f8fafc",
+  color: "#1e293b",
   fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"'
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
 };
 
 const container = {
-  maxWidth: "480px",
+  maxWidth: "600px",
   margin: "0 auto",
-  padding: "20px 0 48px"
+  padding: "20px",
 };
 
-const title = {
+const header = {
+  padding: "25px 0",
+  textAlign: "center" as const,
+  borderBottom: "1px solid #e2e8f0",
+};
+
+const logoContainer = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "12px",
+};
+
+const logoText = {
   fontSize: "24px",
-  lineHeight: 1.25
+  fontWeight: "600",
+  color: "#3b82f6",
+  margin: "0",
 };
 
-const section = {
-  padding: "24px",
-  border: "solid 1px #dedede",
-  borderRadius: "5px",
-  textAlign: "center" as const
+const content = {
+  padding: "30px 20px",
+  backgroundColor: "#ffffff",
+  borderRadius: "8px",
+  margin: "20px 0",
+  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 };
 
-const text = {
-  margin: "0 0 10px 0",
-  textAlign: "left" as const
+const greeting = {
+  fontSize: "18px",
+  fontWeight: "600",
+  color: "#1e293b",
+  marginBottom: "20px",
 };
 
-/* const button = {
-  fontSize: "14px",
-  backgroundColor: "#28a745",
-  color: "#fff",
-  lineHeight: 1.5,
-  borderRadius: "0.5em",
-  padding: "12px 24px"
-}; */
+const paragraph = {
+  fontSize: "16px",
+  lineHeight: "1.5",
+  color: "#475569",
+  margin: "0 0 20px 0",
+};
+
+const messageBox = {
+  backgroundColor: "#f1f5f9",
+  padding: "20px",
+  borderRadius: "6px",
+  margin: "20px 0",
+  borderLeft: "4px solid #3b82f6",
+};
+
+const messageText = {
+  fontSize: "15px",
+  lineHeight: "1.6",
+  color: "#334155",
+  margin: "0",
+};
+
+const button = {
+  display: "inline-block",
+  backgroundColor: "#3b82f6",
+  color: "#ffffff",
+  fontSize: "16px",
+  fontWeight: "500",
+  padding: "12px 24px",
+  borderRadius: "6px",
+  textDecoration: "none",
+  margin: "20px 0",
+};
 
 const footer = {
-  color: "#6a737d",
-  fontSize: "12px",
+  padding: "20px 0",
   textAlign: "center" as const,
-  marginTop: "60px"
+  color: "#64748b",
+  fontSize: "14px",
+  borderTop: "1px solid #e2e8f0",
+};
+
+const footerText = {
+  fontSize: "16px",
+  fontWeight: "600",
+  color: "#3b82f6",
+  margin: "0 0 8px 0",
+};
+
+const footerSmallText = {
+  fontSize: "12px",
+  margin: "0 0 12px 0",
+};
+
+const footerLinks = {
+  fontSize: "12px",
+  color: "#94a3b8",
+};
+
+const link = {
+  color: "#64748b",
+  textDecoration: "none",
+  margin: "0 5px",
 };

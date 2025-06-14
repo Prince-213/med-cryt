@@ -1,48 +1,71 @@
-import { emailHTML } from "@/lib/components/email-template";
-import { sendMail } from "@/lib/components/mail";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export async function POST(req: Request) {
-  const { name, email, message } = await req.json();
+import { Resend } from "resend";
+import EmailTemplate from "../../../lib/components/email-template";
+import { NextRequest, NextResponse } from "next/server";
 
-  console.log(name, email, message);
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function POST(request: NextRequest) {
+  let body;
 
   try {
-    /* const { data, error } = await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
-      to: "princolosh@gmail.com",
-      subject: "New Reach Out from TechOrbit",
-      react: EmailTemplate({ name, email, message }) as React.ReactElement
-    }); */
+    // Check Content-Type before parsing
+    if (request.headers.get("content-type") !== "application/json") {
+      return NextResponse.json(
+        { error: "Invalid Content-Type. Expected application/json" },
+        { status: 400 }
+      );
+    }
 
-    const htmlMail = await emailHTML({
-      name: name,
-      email: email,
-      message: message
+    body = await request.json();
+
+    // Ensure required fields are present
+    if (!body?.email || !body?.name || !body?.message) {
+      return NextResponse.json(
+        { error: "Missing required fields: email, name, or message" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Received Body:", body);
+
+    const { data, error } = await resend.emails.send({
+      from: "Acme <no-reply@kargoxlogistics.com>",
+      to: [body.email],
+      subject: "WorkSafe-Pass Notification",
+      react: EmailTemplate({
+        name: body.name,
+        email: body.email,
+        message: body.message,
+      }) as React.ReactElement,
     });
 
-    /*  const userHtml = await userEmailHTML({
-      name: name
-    }); */
+    console.log(data);
 
-    //Send mail to admin
-    await sendMail({
-      to: `${email}`,
-      name: name,
-      subject: "IMEDIC Notification",
-      body: htmlMail
-    });
+    if (error) {
+      console.error("Email sending error:", error);
+      return NextResponse.json({ error }, { status: 500 });
+    }
 
-    //Sen user mail
+    return NextResponse.json({ data }, { status: 200 });
+  } catch (error: any) {
+    console.error("Error processing request:", error);
 
-    /*    await sendMail({
-      to: email,
-      name: "Medical Lab",
-      subject: "Medical Lab Notification",
-      body: userHtml
-    }); */
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "Invalid JSON format" },
+        { status: 400 }
+      );
+    }
 
-    return Response.json({ data: "yo there" });
-  } catch (error) {
-    return Response.json({ data: `${error}` }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
+
+export const config = {
+  runtime: "nodejs",
+};
