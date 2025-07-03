@@ -48,7 +48,7 @@ const DashboardUI = ({ data }: { data: Patient[] }) => {
               <Image src={"/meeting.png"} alt="" width={25} height={25} />
             </div>
             <span className=" flex items-center space-x-3">
-              <h1 className=" text-4xl font-medium">2</h1>
+              <h1 className=" text-4xl font-medium">{data?.length ?? 0}</h1>
               <p className=" text-gray-400 text-lg ">Patients</p>
             </span>
           </div>
