@@ -104,7 +104,7 @@ export function StaffComponentTable({ data }: { data: Patient[] }) {
   }, [state]);
 
   return (
-    <div className=" w-[96%] mx-auto">
+    <div className=" w-[96%] mx-auto overflow-y-scroll">
       <Drawer open={isPatOpen} onClose={handlePatClose} position="right">
         <Drawer.Header title="ADD MEDICAL DATA" titleIcon={GiHospitalCross} />
         <Drawer.Items>
