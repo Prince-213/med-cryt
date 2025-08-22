@@ -1,6 +1,7 @@
 # Medical Data Encryption Portal
 
-![Project Screenshot](image.png)
+<img width="1919" height="1079" alt="Screenshot 2025-02-25 111851" src="https://github.com/user-attachments/assets/fabf32af-2075-45a6-86b6-6a7a112fbb6c" />
+
 
 ## Overview
 
