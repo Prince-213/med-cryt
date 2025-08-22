@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Medical Data Encryption Portal
 
-## Getting Started
+![Project Screenshot](image.png)
 
-First, run the development server:
+## Overview
 
+A secure Next.js web application designed to protect patient medical data through encryption. This system ensures that medical information remains confidential and can only be accessed when patients provide their decryption keys to healthcare providers.
+
+## Key Features
+
+- 🔒 **End-to-End Encryption**: Patient medical data is encrypted before storage
+- 🔑 **Patient-Controlled Access**: Only patients hold the decryption keys
+- 🏥 **Secure Medical Portal**: Hospitals can request access to medical records
+- ⚡ **Real-time Decryption**: Instant data access when keys are provided
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+
+## Technology Stack
+
+- **Frontend**: Next.js 14 with TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Prisma ORM with preferred database
+- **Encryption**: Crypto library for secure data encryption
+- **Authentication**: Secure session management
+- **Development**: ESLint, PostCSS, and modern tooling
+
+
+## How It Works
+
+### Encryption Process
+1. Patient medical data is encrypted using strong encryption algorithms
+2. Encryption keys are generated uniquely for each patient
+3. Only encrypted data is stored in the hospital's database
+4. Encryption keys are securely provided to patients
+
+### Decryption Process
+1. Patients provide their decryption key to healthcare providers
+2. System uses the key to decrypt medical data in real-time
+3. Decrypted data is displayed temporarily for medical purposes
+4. Data remains encrypted in storage at all times
+
+## Installation & Setup
+
+### Prerequisites
+- Node.js 18+ installed
+- pnpm package manager
+- Database system (PostgreSQL, MySQL, or SQLite)
+
+### Installation Steps
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd medical-encryption-portal
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+Create a `.env` file in the root directory:
+```env
+# Database
+DATABASE_URL="your_database_connection_string"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Encryption (generate secure keys)
+ENCRYPTION_SECRET="your_encryption_secret_key"
 
-## Learn More
+# Next.js
+NEXTAUTH_SECRET="your_nextauth_secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Set up the database:
+```bash
+pnpm prisma generate
+pnpm prisma db push
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Run the development server:
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## Usage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### For Patients:
+1. Register and receive your encryption key
+2. Upload medical documents and records
+3. Provide your key to healthcare providers when needed
+4. Maintain control over who accesses your data
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### For Healthcare Providers:
+1. Request access to patient records
+2. Receive decryption keys from patients
+3. View decrypted medical information temporarily
+4. Never store decrypted data
+
+## Security Features
+
+- **Zero-Knowledge Architecture**: Hospital cannot access data without patient keys
+- **End-to-End Encryption**: Data encrypted before leaving the patient's device
+- **Secure Key Exchange**: Keys are transmitted through secure channels
+- **Temporary Decryption**: Data is only decrypted in memory during viewing sessions
+- **Audit Logs**: All access attempts are logged for security review
+
+## Compliance
+
+This system is designed to help healthcare providers meet compliance requirements including:
+- HIPAA (Health Insurance Portability and Accountability Act)
+- GDPR (General Data Protection Regulation)
+- Other regional healthcare data protection regulations
+
+## Development
+
+### Adding New Features
+1. Follow TypeScript best practices
+2. Maintain encryption protocols throughout
+3. Test thoroughly before deployment
+4. Update documentation accordingly
+
+### Testing Encryption
+Use the test utilities to verify encryption/decryption functionality:
+```bash
+pnpm test:encryption
+```
+
+## Deployment
+
+### Vercel (Recommended)
+1. Connect your repository to Vercel
+2. Add environment variables in the dashboard
+3. Deploy automatically on git push
+
+### Self-Hosting
+1. Build the application: `pnpm build`
+2. Start production server: `pnpm start`
+3. Configure reverse proxy and SSL certificates
+
+## Important Security Notes
+
+- 🔐 Never store encryption keys in the database
+- 🔐 Ensure proper key management practices
+- 🔐 Use HTTPS in production environments
+- 🔐 Regularly update dependencies for security patches
+- 🔐 Conduct security audits periodically
+
+## Support
+
+For technical issues:
+1. Check the console for error messages
+2. Verify encryption key configuration
+3. Ensure database connection is working
+4. Consult the documentation for encryption protocols
+
+## License
+
+This project is licensed under the MIT License. Healthcare providers should ensure compliance with local regulations before use in production environments.
+
+---
+
+**Disclaimer**: This application provides encryption tools but ultimate responsibility for patient data security lies with the healthcare provider implementing this solution. Always consult with legal and compliance experts when handling medical data.
