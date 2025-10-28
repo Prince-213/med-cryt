@@ -52,8 +52,8 @@ export default async function RootLayout({
   //console.log("Task Reminder Service Running...");
 
   return (
-    <html lang="en">
-      <body
+  
+      <div
         className={`${myFont.className} w-full overflow-hidden bg-white h-screen`}
       >
         <div className=" w-full h-screen flex">
@@ -108,7 +108,7 @@ export default async function RootLayout({
             {children}
           </div>
         </div>
-      </body>
-    </html>
+      </div>
+   
   );
 }

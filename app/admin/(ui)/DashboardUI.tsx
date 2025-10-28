@@ -34,8 +34,10 @@ const DashboardUI = ({ data }: { data: Patient[] }) => {
     console.log(state);
     if (state.message == "success") {
       toast.success("Patient add successfully");
+      setIsOpen(false)
     } else if (state.message == "error") {
       toast.error("Error during request..");
+      setIsOpen(false);
     }
   }, [state]);
 

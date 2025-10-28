@@ -98,8 +98,10 @@ export function StaffComponentTable({ data }: { data: Patient[] }) {
     console.log(state);
     if (state.message == "success") {
       toast.success("Vitals added successfully");
+      setIsPatOpen(false)
     } else if (state.message == "error") {
       toast.error("Vitals upload Unsuccessfully");
+      setIsPatOpen(false)
     }
   }, [state]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { decryptString } from "@/lib/utils";
+import { decryptString, getBaseUrl } from "@/lib/utils";
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState, useEffect } from "react";
 import { BiMailSend, BiMap, BiUserCircle } from "react-icons/bi";
@@ -14,12 +14,93 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
     temperature: patientData?.vitalSigns[0]?.temperature || "",
     height: patientData?.vitalSigns[0]?.height || "",
     weight: patientData?.vitalSigns[0]?.weight || "",
-    bmi: patientData?.vitalSigns[0]?.bmi || ""
+    bmi: patientData?.vitalSigns[0]?.bmi || "",
   });
 
   const [decryptKey, setDecryptKey] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+
+  const [otpTimer, setOtpTimer] = useState(60);
+  const [otpExpired, setOtpExpired] = useState(false);
+
+  const sendOtp = async ({
+    name,
+    email,
+    otp,
+  }: {
+    name: string;
+    email: string;
+    otp: string;
+  }) => {
+    try {
+      const response = await fetch(`${getBaseUrl()}/api/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message: `Your one time OTP is ${otp}`,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Email sent successfully!");
+
+        return {
+          message: "success",
+        };
+      } else {
+        const errorDetails = await response.json();
+        console.error("Error sending email:", errorDetails.message);
+        return {
+          message: "wrong",
+        };
+      }
+    } catch (error) {
+      console.error("There was a problem sending the email:", error);
+      return {
+        message: "wrong",
+      };
+    }
+  };
+
+  const generateOtp = async () => {
+    setOpen(false);
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(newOtp);
+    console.log(newOtp);
+    await sendOtp({
+      name: patientData?.name ?? "",
+      email: patientData?.email ?? "",
+      otp: newOtp.toString(),
+    });
+    setOtp("");
+    setOtpModalOpen(true);
+    setOtpTimer(60);
+    setOtpExpired(false);
+    return newOtp;
+  };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (otpModalOpen && otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (otpTimer === 0 && otpModalOpen && !otpExpired) {
+      setOtpExpired(true);
+      toast.error("OTP has expired. Please try again.");
+    }
+    return () => clearInterval(interval);
+  }, [otpModalOpen, otpTimer, otpExpired]);
 
   const decryptInfo = async () => {
     setLoading(true);
@@ -41,7 +122,7 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
           : "",
         patient.height ? decryptString(patient.height, decryptKey) : "",
         patient.weight ? decryptString(patient.weight, decryptKey) : "",
-        patient.bmi ? decryptString(patient.bmi, decryptKey) : ""
+        patient.bmi ? decryptString(patient.bmi, decryptKey) : "",
       ]);
 
       // Update state with decrypted values
@@ -53,10 +134,35 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
         temperature: decryptedFields[3],
         height: decryptedFields[4],
         weight: decryptedFields[5],
-        bmi: decryptedFields[6]
+        bmi: decryptedFields[6],
       }));
 
       toast.success("Decryption successful!");
+    } catch (error) {
+      console.error("Decryption error:", error);
+      toast.error("Decryption failed. Please check the key and try again.");
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    if (otpExpired) {
+      toast.error("OTP has expired. Please request a new one.");
+      return;
+    }
+
+    if (otp !== generatedOtp) {
+      toast.error("Wrong OTP. Please try again.");
+      return;
+    }
+
+    try {
+      decryptInfo();
+      setOtpModalOpen(false);
+      setDecryptKey("");
+      setOtp("");
     } catch (error) {
       console.error("Decryption error:", error);
       toast.error("Decryption failed. Please check the key and try again.");
@@ -72,6 +178,57 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
 
   return (
     <div className="w-[80%]">
+      <Modal
+        show={otpModalOpen}
+        size="md"
+        popup
+        onClose={() => !otpExpired && setOtpModalOpen(false)}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="space-y-6">
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+              A one time otp has bee sent you your email
+            </h3>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                OTP expires in:
+              </p>
+              <p
+                className={`text-lg font-bold ${
+                  otpTimer <= 10 ? "text-red-500" : "text-green-500"
+                }`}
+              >
+                {otpTimer}s
+              </p>
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="otp" value="Enter 6-digit OTP" />
+              </div>
+              <TextInput
+                id="otp"
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="000000"
+                maxLength={6}
+                required
+                disabled={loading || otpExpired}
+              />
+            </div>
+            <Button
+              onClick={verifyOtp}
+              disabled={loading || otpExpired || otp.length !== 6}
+            >
+              {loading ? "Verifying..." : "Verify OTP"}
+            </Button>
+            {otpExpired && (
+              <p className="text-sm text-red-500 text-center">
+                OTP has expired. Please close and try again.
+              </p>
+            )}
+          </div>
+        </Modal.Body>
+      </Modal>
       <Modal show={open} size="md" popup onClose={() => setOpen(false)}>
         <Modal.Header />
         <Modal.Body>
@@ -91,7 +248,7 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
                 disabled={loading}
               />
             </div>
-            <Button onClick={decryptInfo} disabled={loading}>
+            <Button onClick={generateOtp} disabled={loading}>
               {loading ? "Decrypting..." : "Decrypt"}
             </Button>
           </div>

@@ -22,6 +22,7 @@ model Patient {
   age        String
   adress     String
   gender     String
+  otp        String?
 }
 
 model VitalSigns {
@@ -36,4 +37,10 @@ model VitalSigns {
   height String? // in cm
   weight String? // in kg
   bmi    String? // Optional (can be auto-calculated)
+}
+
+model Threat {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  time String
 }
