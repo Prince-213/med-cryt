@@ -15,32 +15,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
 
-interface SuspiciousLogin {
-  id: string;
-  name: string;
-  timeOfLogin: string;
-  severity: "high" | "medium" | "low";
-}
-
-
-
-const getSeverityColor = (severity: string) => {
-  switch (severity) {
-    case "high":
-      return "bg-destructive text-destructive-foreground";
-    case "medium":
-      return "bg-yellow-500 text-white";
-    case "low":
-      return "bg-blue-500 text-white";
-    default:
-      return "bg-muted text-muted-foreground";
-  }
-};
-
-export function SuspiciousLoginsTable({ threatData }: { threatData: Threat[] }) {
+export function SuspiciousLoginsTable({
+  threatData,
+}: {
+  threatData: Threat[];
+}) {
   return (
     <Card>
       <CardHeader>
@@ -61,7 +42,6 @@ export function SuspiciousLoginsTable({ threatData }: { threatData: Threat[] }) 
               <TableRow className="bg-muted hover:bg-muted">
                 <TableHead className="font-semibold">Name</TableHead>
                 <TableHead className="font-semibold">Time of Login</TableHead>
-                
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -71,7 +51,6 @@ export function SuspiciousLoginsTable({ threatData }: { threatData: Threat[] }) 
                   <TableCell className="text-muted-foreground">
                     {login.time}
                   </TableCell>
-                
                 </TableRow>
               ))}
             </TableBody>
