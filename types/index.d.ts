@@ -9,6 +9,12 @@ interface Patient {
   gender: string;
 }
 
+interface Threat {
+  id: string;
+  name: string;
+  time: string;
+}
+
 interface VitalSigns {
   id: string;
   patientId: string;

@@ -139,6 +139,20 @@ export async function addVitals(prevState: any, formData: FormData) {
   }
 }
 
+export async function addThreat(name: string) {
+  try {
+    await prisma.threat.create({
+      data: {
+        name,
+        time: `${Date.now()}`,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return { message: "error" };
+  }
+}
+
 export async function vital(formData: FormData) {
   console.log(formData);
 }

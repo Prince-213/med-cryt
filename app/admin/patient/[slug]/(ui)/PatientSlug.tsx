@@ -1,5 +1,6 @@
 "use client";
 
+import { addThreat } from "@/lib/actions";
 import { decryptString, getBaseUrl } from "@/lib/utils";
 import { Button, Label, Modal, TextInput } from "flowbite-react";
 import React, { useState, useEffect } from "react";
@@ -140,6 +141,7 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
       toast.success("Decryption successful!");
     } catch (error) {
       console.error("Decryption error:", error);
+      await addThreat(patientData?.name ?? "")
       toast.error("Decryption failed. Please check the key and try again.");
     } finally {
       setLoading(false);
@@ -279,9 +281,9 @@ const PatientSlug = ({ patientData }: { patientData: Patient | null }) => {
           <BiMailSend size={24} />
           <p>{patientData?.email}</p>
         </div>
-        <div className="border-2 flex items-center space-x-2 p-4 rounded-lg">
+        <div className="border-2 max-w-[80%] flex items-center space-x-2 p-4 rounded-lg">
           <BiMap size={24} />
-          <p>{patient.adress}</p>
+          <p className=" truncate">{patient.adress}</p>
         </div>
       </div>
       <div className="py-5 border-b-2 border-gray-100">

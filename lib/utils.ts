@@ -1,4 +1,11 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 // Helper functions to convert between Base64 and Uint8Array
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 function arrayBufferToBase64(buffer: Uint8Array<ArrayBuffer>) {
   let binary = "";
   const bytes = new Uint8Array(buffer);
@@ -128,8 +135,13 @@ export const links = [
   {
     name: "Dashboard",
     href: "/admin",
-    icon: "dashboard.png"
-  }
+    icon: "dashboard.png",
+  },
+  {
+    name: "Threats",
+    href: "/admin/threats",
+    icon: "icons8-hacker-100.png",
+  },
 ];
 
 export const getBaseUrl = (): string => {

@@ -32,7 +32,7 @@ const SideBar = () => {
                 href={`${item.href}`}
                 key={index}
                 className={` flex flex-row items-center hover:bg-site-blue/10 transition-all duration-150 space-x-3 ${
-                  item.href.startsWith(pathname)
+                  item.href == pathname
                     ? "bg-blue-500/10"
                     : " bg-transparent"
                 } px-4 py-3 rounded-xl`}
