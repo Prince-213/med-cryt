@@ -22,19 +22,6 @@ export function SuspiciousLoginsTable({
 }: {
   threatData: Threat[];
 }) {
-  const formatDate = (timestamp: string) => {
-    const date = new Date(Number(timestamp));
-    return date.toLocaleString("en-US", {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
   return (
     <Card className="shadow-none  border-none ">
       <CardHeader className="flex flex-row items-center justify-between">

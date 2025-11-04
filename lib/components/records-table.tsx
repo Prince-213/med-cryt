@@ -11,11 +11,10 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AlertCircle, User, Users2 } from "lucide-react";
+import { AlertCircle, Users2 } from "lucide-react";
 
 interface PatientRecord {
   otp: string | null;
@@ -33,19 +32,6 @@ export function PatientRecordsTable({
 }: {
   threatData: PatientRecord[];
 }) {
-  const formatDate = (timestamp: string) => {
-    const date = new Date(Number(timestamp));
-    return date.toLocaleString("en-US", {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
   return (
     <Card className="shadow-none  border-none ">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -57,11 +43,11 @@ export function PatientRecordsTable({
             <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Patient Records
             </CardTitle>
-            <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
+            {/* <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
               {threatData.length
                 ? `${threatData.length} suspicious login attempts detected`
                 : "No suspicious activity detected"}
-            </CardDescription>
+            </CardDescription> */}
           </div>
         </div>
       </CardHeader>

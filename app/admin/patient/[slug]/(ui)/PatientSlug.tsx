@@ -95,11 +95,9 @@ Stay safe,
           throw new Error(error.message || "Failed to send alert email");
         }
 
-        toast.success("Suspicious login alert sent successfully!");
         return true;
       } catch (error) {
         console.error("Email send error:", error);
-        toast.error("Failed to send alert email. Please try again.");
         return false;
       }
     },
@@ -168,7 +166,7 @@ Stay safe,
     } finally {
       setLoading(false);
     }
-  }, [decryptKey, patientData, generateOtp]);
+  }, [decryptKey, patientData, generateOtp, sendSuspiciousLoginAlert]);
 
   /** -------------------- 🔹 Decrypt Patient Info -------------------- **/
   const decryptInfo = useCallback(async () => {
