@@ -44,7 +44,7 @@ const SideBar = () => {
             );
           })}
 
-          <div
+          {/* <div
             className={` flex flex-row items-center hover:bg-site-blue/10 transition-all duration-150 space-x-3 ${
               pathname.startsWith("/admin/patient")
                 ? "bg-blue-500/10"
@@ -59,7 +59,7 @@ const SideBar = () => {
             />
 
             <p className=" capitalize font-medium">Patient</p>
-          </div>
+          </div> */}
         </ul>
       </nav>
     </div>

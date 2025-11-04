@@ -15,12 +15,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, User, Users2 } from "lucide-react";
 
-export function SuspiciousLoginsTable({
+interface PatientRecord {
+  otp: string | null;
+  kd: string;
+  adress: string;
+  key: string | null;
+  id: string;
+  name: string;
+  gender: string;
+  email: string;
+  age: string;
+}
+export function PatientRecordsTable({
   threatData,
 }: {
-  threatData: Threat[];
+  threatData: PatientRecord[];
 }) {
   const formatDate = (timestamp: string) => {
     const date = new Date(Number(timestamp));
@@ -40,11 +51,11 @@ export function SuspiciousLoginsTable({
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/40">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+            <Users2 className="h-5 w-5 text-blue-600 dark:text-red-400" />
           </div>
           <div>
             <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Suspicious Logins
+              Patient Records
             </CardTitle>
             <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
               {threatData.length
@@ -59,9 +70,7 @@ export function SuspiciousLoginsTable({
         {threatData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
             <AlertCircle className="h-10 w-10 mb-3 text-gray-400" />
-            <p className="text-sm font-medium">
-              No suspicious login attempts found
-            </p>
+            <p className="text-sm font-medium">No records found</p>
           </div>
         ) : (
           <div className="rounded-lg border border-border overflow-hidden">
@@ -72,7 +81,10 @@ export function SuspiciousLoginsTable({
                     Name
                   </TableHead>
                   <TableHead className="font-semibold text-gray-700 dark:text-gray-200">
-                    Time of Login
+                    Key
+                  </TableHead>
+                  <TableHead className="font-semibold text-gray-700 dark:text-gray-200">
+                    Email Address
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -90,7 +102,10 @@ export function SuspiciousLoginsTable({
                       {login.name}
                     </TableCell>
                     <TableCell className="text-gray-600 dark:text-gray-400">
-                      {login.time}
+                      {login.key}
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-400">
+                      {login.email}
                     </TableCell>
                   </TableRow>
                 ))}

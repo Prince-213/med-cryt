@@ -22,6 +22,7 @@ model Patient {
   age        String
   adress     String
   gender     String
+  key        String?
   otp        String?
 }
 

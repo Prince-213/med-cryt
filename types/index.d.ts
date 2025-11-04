@@ -5,6 +5,8 @@ interface Patient {
   email: string;
   name: string;
   age: string;
+  key: string?;
+  otp: string?;
   adress: string; // Note: Likely a typo, should be "address"
   gender: string;
 }

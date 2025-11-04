@@ -51,7 +51,7 @@ export async function encryptString(
       name: "PBKDF2",
       salt: salt,
       iterations: 100000,
-      hash: "SHA-256"
+      hash: "SHA-256",
     },
     keyMaterial,
     { name: "AES-GCM", length: 256 },
@@ -73,7 +73,7 @@ export async function encryptString(
   const combined = new Uint8Array([
     ...salt,
     ...iv,
-    ...new Uint8Array(ciphertext)
+    ...new Uint8Array(ciphertext),
   ]);
 
   // Convert to Base64 for storage/transmission
@@ -109,7 +109,7 @@ export async function decryptString(
       name: "PBKDF2",
       salt: salt,
       iterations: 100000,
-      hash: "SHA-256"
+      hash: "SHA-256",
     },
     keyMaterial,
     { name: "AES-GCM", length: 256 },
@@ -141,6 +141,11 @@ export const links = [
     name: "Threats",
     href: "/admin/threats",
     icon: "icons8-hacker-100.png",
+  },
+  {
+    name: "Records",
+    href: "/admin/records",
+    icon: "icons8-staff-96.png",
   },
 ];
 

@@ -38,6 +38,7 @@ export async function createUser(prevState: any, formData: FormData) {
         gender: gender?.toString() || "",
         age: age?.toString() || "",
         adress: cryptAddress,
+        key: id3,
       },
     });
 
@@ -140,13 +141,16 @@ export async function addVitals(prevState: any, formData: FormData) {
 }
 
 export async function addThreat(name: string) {
+  const now = new Date();
+  const formattedDate = now.toISOString().replace("T", " ").slice(0, 19);
   try {
     await prisma.threat.create({
       data: {
         name,
-        time: `${Date.now()}`,
+        time: `${formattedDate}`,
       },
     });
+    console.log("added");
   } catch (err) {
     console.log(err);
     return { message: "error" };
