@@ -6,7 +6,7 @@ const ThreatPage = async () => {
   const threatData = await prisma.threat.findMany();
 
   return (
-    <div>
+    <div className=" w-full min-h-screen overflow-y-scroll pb-20">
       <SuspiciousLoginsTable threatData={threatData} />
     </div>
   );

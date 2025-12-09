@@ -3,10 +3,10 @@
 
 import generateUniqueId from "generate-unique-id";
 import prisma from "./prisma";
-import { encryptString, getBaseUrl } from "./utils";
-
+import { encryptString, getBaseUrl, staffCredentials } from "./utils";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+
 import { revalidatePath } from "next/cache";
 
 export async function createUser(prevState: any, formData: FormData) {
@@ -162,25 +162,160 @@ export async function vital(formData: FormData) {
 }
 
 export async function adminLogin(prevState: any, formData: FormData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   const cookieStore = await cookies();
 
-  if (email != "medadmin@gmail.com" && password != "pass@1234") {
-    return { message: "Please enter a valid credential" };
+  // Admin credentials (move to env in production)
+  const adminCredentials = {
+    email: "admin@imedic.gmail.com",
+    password: "AdminSecure@2024",
+    id: "admin_001",
+  };
+
+  if (!email || !password) {
+    return { message: "Email and password are required" };
   }
 
-  cookieStore.set("admin", "sdk23@ksjkfdka", { secure: true });
+  if (
+    email !== adminCredentials.email ||
+    password !== adminCredentials.password
+  ) {
+    return {
+      message: "Invalid admin credentials. Please try again.",
+    };
+  }
+
+  const sessionData = {
+    id: adminCredentials.id,
+    email: adminCredentials.email,
+    userType: "admin",
+    timestamp: new Date().toISOString(),
+  };
+
+  const sessionToken = Buffer.from(JSON.stringify(sessionData)).toString(
+    "base64"
+  );
+
+  cookieStore.set("admin_session", sessionToken, {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 60 * 60 * 8,
+    path: "/",
+  });
+
   redirect("/admin");
 }
 
-export const adminLogout = async () => {
+export async function staffLogin(prevState: any, formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
   const cookieStore = await cookies();
 
-  cookieStore.delete("admin");
-  redirect("/");
-};
+  // Validate inputs
+  if (!email || !password) {
+    return { message: "Email and password are required" };
+  }
+
+  // Find matching staff credentials
+  const staff = staffCredentials.find(
+    (cred) => cred.email === email && cred.password === password
+  );
+  console.log(staff);
+
+  if (!staff) {
+    console.log("staff error");
+    return {
+      message: "Invalid credentials. Please check your email and password.",
+    };
+  }
+
+  // Create staff session with more secure approach
+  const sessionData = {
+    id: staff.id,
+    email: staff.email,
+    name: staff.name,
+    role: staff.role,
+    userType: "staff",
+    timestamp: new Date().toISOString(),
+  };
+
+  // Encrypt session data (in real app, use proper encryption)
+  const sessionToken = Buffer.from(JSON.stringify(sessionData)).toString(
+    "base64"
+  );
+
+  // Set session cookie
+  cookieStore.set("staff_session", sessionToken, {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 60 * 60 * 8, // 8 hours
+    path: "/",
+  });
+
+  // Redirect to staff dashboard
+  redirect("/admin");
+}
+
+// Optional: Helper function to validate staff session
+export async function validateStaffSession() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get("staff_session")?.value;
+
+  if (!sessionToken) {
+    return null;
+  }
+
+  try {
+    const sessionData = JSON.parse(
+      Buffer.from(sessionToken, "base64").toString()
+    );
+
+    // Verify session data structure
+    if (sessionData.userType !== "staff") {
+      return null;
+    }
+
+    // Optional: Check if session is expired
+    const sessionTime = new Date(sessionData.timestamp);
+    const now = new Date();
+    const hoursDiff =
+      (now.getTime() - sessionTime.getTime()) / (1000 * 60 * 60);
+
+    if (hoursDiff > 8) {
+      // Session expired after 8 hours
+      return null;
+    }
+
+    return sessionData;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Optional: Logout function
+export async function staffLogout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("staff_session");
+  redirect("/login");
+}
+
+export async function adminLogout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("admin_session");
+  redirect("/login");
+}
+
+export async function logout() {
+  const cookieStore = await cookies();
+  cookieStore.delete("admin_session");
+  cookieStore.delete("staff_session");
+  redirect("/login");
+}
 
 export const deleteRecord = async (id: string) => {
   try {

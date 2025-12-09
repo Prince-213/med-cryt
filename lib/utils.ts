@@ -2,6 +2,29 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 // Helper functions to convert between Base64 and Uint8Array
+export const staffCredentials = [
+  {
+    email: "johnson@gmail.com",
+    password: "MedSecure@2024",
+    id: "staff_001",
+    name: "John Johnson",
+    role: "Nurse Practitioner",
+  },
+  {
+    email: "sarahchen@gmail.com",
+    password: "HealthCare#789",
+    id: "staff_002",
+    name: "Dr. Sarah Chen",
+    role: "Senior Physician",
+  },
+  {
+    email: "rodriguez@gmail.com",
+    password: "PatientS@fe123",
+    id: "staff_003",
+    name: "Mike Rodriguez",
+    role: "Medical Assistant",
+  },
+];
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -131,22 +154,28 @@ export async function decryptString(
 
 // Example usage
 
+// lib/utils.ts or wherever your links are defined
 export const links = [
   {
     name: "Dashboard",
     href: "/admin",
     icon: "dashboard.png",
+    adminOnly: false, // Both admin and staff can access
   },
   {
     name: "Threats",
     href: "/admin/threats",
     icon: "icons8-hacker-100.png",
+    adminOnly: true, // Only admin can access
   },
   {
     name: "Records",
     href: "/admin/records",
     icon: "icons8-staff-96.png",
+    adminOnly: true, // Only admin can access
   },
+  // Add staff-specific links if needed
+  
 ];
 
 export const getBaseUrl = (): string => {
