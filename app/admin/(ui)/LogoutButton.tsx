@@ -1,21 +1,13 @@
 "use client";
 
 import { logout } from "@/lib/actions";
-import { Loader, LogOut } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 const LogoutButton = () => {
-  const [pending, setPending] = useState(false);
-
   const signOut = async () => {
-    setPending(true);
-
     try {
       await logout();
-    } catch {
-    } finally {
-      setPending(false);
-    }
+    } catch {}
   };
 
   return (

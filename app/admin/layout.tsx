@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import SideBar from "../(ui)/shared/sidebar";
 import { Search, Plus, ChevronDown, User } from "lucide-react";
 import localFont from "next/font/local";
-import LogoutButton from "./(ui)/LogoutButton";
 
 const myFont = localFont({
   src: "../(font)/Outfit-Variable.ttf",

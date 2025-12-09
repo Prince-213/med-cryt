@@ -293,6 +293,7 @@ export async function validateStaffSession() {
 
     return sessionData;
   } catch (error) {
+    console.error("Session parsing error:", error);
     return null;
   }
 }

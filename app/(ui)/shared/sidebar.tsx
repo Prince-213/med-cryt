@@ -36,16 +36,7 @@ const SideBar = ({ userType }: SideBarProps) => {
   });
 
   // Handle logout
-  const handleLogout = () => {
-    // Clear cookies
-    document.cookie =
-      "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-    document.cookie =
-      "staff_session=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 
-    // Redirect to login
-    window.location.href = "/login";
-  };
 
   return (
     <div className="p-5 w-[15%] bg-site-grey border-r-2 border-r-gray-200/50 h-full">
