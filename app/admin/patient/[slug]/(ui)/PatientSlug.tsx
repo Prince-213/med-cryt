@@ -35,7 +35,13 @@ const PatientSlug: React.FC<PatientSlugProps> = ({ patientData }) => {
   /** -------------------- 🔹 Helper: Send OTP -------------------- **/
   const sendOtp = useCallback(
     async (name: string, email: string, otp: string) => {
+      const emailTraceId = crypto.randomUUID();
       try {
+        console.log(`[patient-otp][${emailTraceId}] send_start`, {
+          endpoint: `${getBaseUrl()}/api/send`,
+          recipientDomain: email.includes("@") ? email.split("@")[1] : null,
+        });
+
         const response = await fetch(`${getBaseUrl()}/api/send`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -48,13 +54,25 @@ const PatientSlug: React.FC<PatientSlugProps> = ({ patientData }) => {
 
         if (!response.ok) {
           const error = await response.json();
+          console.error(`[patient-otp][${emailTraceId}] send_failed`, {
+            status: response.status,
+            apiTraceId: error?.traceId,
+            error,
+          });
           throw new Error(error.message || "Failed to send email");
         }
+
+        const success = await response.json();
+        console.log(`[patient-otp][${emailTraceId}] send_success`, {
+          status: response.status,
+          apiTraceId: success?.traceId,
+          providerId: success?.data?.id,
+        });
 
         toast.success("OTP sent successfully!");
         return true;
       } catch (error) {
-        console.error("Email send error:", error);
+        console.error(`[patient-otp][${emailTraceId}] send_exception`, error);
         toast.error("Failed to send OTP. Please try again.");
         return false;
       }
@@ -64,7 +82,13 @@ const PatientSlug: React.FC<PatientSlugProps> = ({ patientData }) => {
 
   const sendSuspiciousLoginAlert = useCallback(
     async (name: string, email: string) => {
+      const emailTraceId = crypto.randomUUID();
       try {
+        console.log(`[suspicious-alert][${emailTraceId}] send_start`, {
+          endpoint: `${getBaseUrl()}/api/send`,
+          recipientDomain: email.includes("@") ? email.split("@")[1] : null,
+        });
+
         const response = await fetch(`${getBaseUrl()}/api/send`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -92,12 +116,27 @@ Stay safe,
 
         if (!response.ok) {
           const error = await response.json();
+          console.error(`[suspicious-alert][${emailTraceId}] send_failed`, {
+            status: response.status,
+            apiTraceId: error?.traceId,
+            error,
+          });
           throw new Error(error.message || "Failed to send alert email");
         }
 
+        const success = await response.json();
+        console.log(`[suspicious-alert][${emailTraceId}] send_success`, {
+          status: response.status,
+          apiTraceId: success?.traceId,
+          providerId: success?.data?.id,
+        });
+
         return true;
       } catch (error) {
-        console.error("Email send error:", error);
+        console.error(
+          `[suspicious-alert][${emailTraceId}] send_exception`,
+          error
+        );
         return false;
       }
     },

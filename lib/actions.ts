@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export async function createUser(prevState: any, formData: FormData) {
+  const emailTraceId = crypto.randomUUID();
   const id3 = generateUniqueId({
     includeSymbols: ["@", "#", "|"],
     length: 10,
@@ -43,35 +44,55 @@ export async function createUser(prevState: any, formData: FormData) {
     });
 
     try {
+      const emailPayload = {
+        name: `${formData.get("name")?.toString()}`,
+        email: `${formData.get("email")?.toString()}`,
+        message: `Welcome ${name?.toString()} to IMEDIC. Your Digital profile has been created. This is your decryption key ${id3}`,
+      };
+
+      console.log(`[createUser][${emailTraceId}] email_send_start`, {
+        endpoint: `${getBaseUrl()}/api/send`,
+        recipientDomain: emailPayload.email.includes("@")
+          ? emailPayload.email.split("@")[1]
+          : null,
+        messageLength: emailPayload.message.length,
+      });
+
       const response = await fetch(`${getBaseUrl()}/api/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: `${formData.get("name")?.toString()}`,
-          email: `${formData.get("email")?.toString()}`,
-          message: `Welcome ${name?.toString()} to IMEDIC. Your Digital profile has been created. This is your decryption key ${id3}`,
-        }),
+        body: JSON.stringify(emailPayload),
       });
 
       revalidatePath("/admin");
 
       if (response.ok) {
-        console.log("Email sent successfully!");
+        const successDetails = await response.json();
+        console.log(`[createUser][${emailTraceId}] email_send_success`, {
+          status: response.status,
+          apiTraceId: successDetails?.traceId,
+          providerId: successDetails?.data?.id,
+        });
 
         return {
           message: "success",
         };
       } else {
         const errorDetails = await response.json();
-        console.error("Error sending email:", errorDetails.message);
+        console.error(`[createUser][${emailTraceId}] email_send_failed`, {
+          status: response.status,
+          apiTraceId: errorDetails?.traceId,
+          error: errorDetails?.error ?? errorDetails?.message,
+          details: errorDetails,
+        });
         return {
           message: "wrong",
         };
       }
     } catch (error) {
-      console.error("There was a problem sending the email:", error);
+      console.error(`[createUser][${emailTraceId}] email_send_exception`, error);
       return {
         message: "wrong",
       };
