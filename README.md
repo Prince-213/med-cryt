@@ -60,17 +60,25 @@ pnpm install
 ```
 
 3. Set up environment variables:
-Create a `.env` file in the root directory:
+Copy `.env.example` to `.env` and fill in your values:
 ```env
 # Database
 DATABASE_URL="your_database_connection_string"
 
-# Encryption (generate secure keys)
-ENCRYPTION_SECRET="your_encryption_secret_key"
+# App
+NEXT_PUBLIC_APP_NAME="IMEDIC"
+NEXT_PUBLIC_APP_TAGLINE="Healthcare Services"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
-# Next.js
-NEXTAUTH_SECRET="your_nextauth_secret"
-NEXTAUTH_URL="http://localhost:3000"
+# Email (Resend)
+RESEND_API_KEY="re_xxxxxxxx"
+EMAIL_FROM="Acme <no-reply@peeng.me>"
+EMAIL_DEFAULT_SUBJECT="IMEDIC Notification"
+
+# Admin login
+ADMIN_EMAIL="admin@imedic.gmail.com"
+ADMIN_PASSWORD="change-me"
+ADMIN_ID="admin_001"
 ```
 
 4. Set up the database:

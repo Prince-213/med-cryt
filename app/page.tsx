@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BsClipboardPulse } from "react-icons/bs";
+import { appConfig } from "@/lib/config";
 
 export default function Home() {
   return (
@@ -18,7 +19,9 @@ export default function Home() {
         <div className="w-[90%] mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3 md:space-x-5">
             <BsClipboardPulse className="text-cyan-200 w-8 h-8 md:w-10 md:h-10" />
-            <h1 className="font-bold text-2xl md:text-3xl uppercase text-white">imedic</h1>
+            <h1 className="font-bold text-2xl md:text-3xl uppercase text-white">
+              {appConfig.name}
+            </h1>
           </div>
 
           <div>

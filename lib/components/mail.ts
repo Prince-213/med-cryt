@@ -1,42 +1,53 @@
 import nodemailer from "nodemailer";
+import { appConfig } from "../config";
 
 export async function sendMail({
   to,
-
   subject,
-  body
+  body,
 }: {
   to: string;
   name: string;
   subject: string;
   body: string;
 }) {
-  const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
+  const smtpEmail = appConfig.smtp.email;
+  const smtpPassword = appConfig.smtp.password;
+
+  if (!smtpEmail || !smtpPassword) {
+    console.error("[sendMail] missing SMTP_EMAIL or SMTP_PASSWORD in env");
+    return;
+  }
 
   const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: SMTP_EMAIL,
-      pass: SMTP_PASSWORD
-    }
+      user: smtpEmail,
+      pass: smtpPassword,
+    },
   });
+
   try {
     const testResult = await transport.verify();
-    console.log(testResult);
+    console.log("[sendMail] smtp_verify_ok", testResult);
   } catch (error) {
-    console.error({ error });
+    console.error("[sendMail] smtp_verify_failed", { error });
     return;
   }
 
   try {
     const sendResult = await transport.sendMail({
-      from: SMTP_EMAIL,
+      from: smtpEmail,
       to,
       subject,
-      html: body
+      html: body,
     });
-    console.log(sendResult);
+    console.log("[sendMail] smtp_send_ok", {
+      messageId: sendResult.messageId,
+      accepted: sendResult.accepted,
+      rejected: sendResult.rejected,
+    });
   } catch (error) {
-    console.log(error);
+    console.error("[sendMail] smtp_send_failed", error);
   }
 }

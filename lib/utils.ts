@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { appConfig } from "./config";
 
 // Helper functions to convert between Base64 and Uint8Array
 export const staffCredentials = [
@@ -178,11 +179,4 @@ export const links = [
   
 ];
 
-export const getBaseUrl = (): string => {
-  const siteUrl =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "https://med-cryt.vercel.app";
-
-  return siteUrl;
-};
+export const getBaseUrl = (): string => appConfig.url;

@@ -12,6 +12,7 @@ import * as React from "react";
 import { render } from "@react-email/render";
 import { LuStethoscope } from "react-icons/lu";
 import { getBaseUrl } from "../utils";
+import { appConfig } from "../config";
 
 interface MedicalNotificationEmailProps {
   name?: string;
@@ -26,14 +27,16 @@ export const EmailTemplate = ({
 }: MedicalNotificationEmailProps) => (
   <Html>
     <Head />
-    <Preview>New notification from MediLab {name ? `for ${name}` : ""}</Preview>
+    <Preview>
+      New notification from {appConfig.name} {name ? `for ${name}` : ""}
+    </Preview>
     <Body style={main}>
       <Container style={container}>
         {/* Header with logo */}
         <Section style={header}>
           <div style={logoContainer}>
             <LuStethoscope size={32} color="#3b82f6" />
-            <Text style={logoText}>MediLab</Text>
+            <Text style={logoText}>{appConfig.name}</Text>
           </div>
         </Section>
 
@@ -42,7 +45,7 @@ export const EmailTemplate = ({
           <Text style={greeting}>Hello {name || "there"},</Text>
 
           <Text style={paragraph}>
-            You have a new notification from your MediLab account{" "}
+            You have a new notification from your {appConfig.name} account{" "}
             <strong>{email}</strong>:
           </Text>
 
@@ -57,7 +60,9 @@ export const EmailTemplate = ({
 
         {/* Footer */}
         <Section style={footer}>
-          <Text style={footerText}>MediLab Healthcare Services</Text>
+          <Text style={footerText}>
+            {appConfig.name} {appConfig.tagline}
+          </Text>
           <Text style={footerSmallText}>Providing quality care since 2023</Text>
           <Text style={footerLinks}>
             <Link href={`${getBaseUrl()}/contact`} style={link}>

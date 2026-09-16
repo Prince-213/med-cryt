@@ -3,8 +3,9 @@
 import { Resend } from "resend";
 import EmailTemplate from "../../../lib/components/email-template";
 import { NextRequest, NextResponse } from "next/server";
+import { appConfig } from "@/lib/config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(appConfig.email.apiKey);
 
 export async function POST(request: NextRequest) {
   const traceId = crypto.randomUUID();
@@ -26,7 +27,9 @@ export async function POST(request: NextRequest) {
       method: request.method,
       url: request.nextUrl.pathname,
       contentType,
-      hasResendApiKey: Boolean(process.env.RESEND_API_KEY),
+      hasResendApiKey: Boolean(appConfig.email.apiKey),
+      hasEmailFrom: Boolean(appConfig.email.from),
+      emailFrom: appConfig.email.from,
     });
 
     // Accept application/json with optional charset
@@ -71,12 +74,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    safeLog("log", "sending_email_start");
+    if (!appConfig.email.apiKey) {
+      safeLog("error", "missing_resend_api_key");
+      return NextResponse.json(
+        { error: "Email service is not configured (RESEND_API_KEY)", traceId },
+        { status: 500 }
+      );
+    }
+
+    if (!appConfig.email.from) {
+      safeLog("error", "missing_email_from");
+      return NextResponse.json(
+        { error: "Email service is not configured (EMAIL_FROM)", traceId },
+        { status: 500 }
+      );
+    }
+
+    const subject = body.subject || appConfig.email.defaultSubject;
+
+    safeLog("log", "sending_email_start", {
+      from: appConfig.email.from,
+      subject,
+      toDomain:
+        typeof body.email === "string" && body.email.includes("@")
+          ? body.email.split("@")[1]
+          : null,
+    });
 
     const { data, error } = await resend.emails.send({
-      from: "Acme <no-reply@peeng.me>",
+      from: appConfig.email.from,
       to: [body.email],
-      subject: body.subject || "WorkSafe-Pass Notification",
+      subject,
       react: EmailTemplate({
         name: body.name,
         email: body.email,

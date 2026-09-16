@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Loader, Shield, User } from "lucide-react";
 import { BsClipboardPulse } from "react-icons/bs";
 import { adminLogin, staffLogin } from "@/lib/actions";
+import { appConfig } from "@/lib/config";
 
 const initialState = {
   message: "",
@@ -33,7 +34,9 @@ export default function Login() {
       <div className="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col items-center">
         <div className="flex items-center space-x-5">
           <BsClipboardPulse className="text-cyan-200 w-10 h-10" />
-          <h1 className="font-bold text-3xl uppercase text-white">imedic</h1>
+          <h1 className="font-bold text-3xl uppercase text-white">
+            {appConfig.name}
+          </h1>
         </div>
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">
           Sign in to Dashboard

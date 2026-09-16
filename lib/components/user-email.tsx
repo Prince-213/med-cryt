@@ -16,25 +16,26 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 import { LuStethoscope } from "react-icons/lu";
+import { appConfig } from "../config";
 
 interface SlackConfirmEmailProps {
   name?: string;
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://techorbit.vercel.app`
-  : "https://techorbit.vercel.app";
+const baseUrl = appConfig.url;
 
 export const SlackConfirmEmail = ({ name }: SlackConfirmEmailProps) => (
   <Html>
     <Head />
-    <Preview>You have a new notification from Medical Lab</Preview>
+    <Preview>
+      You have a new notification from {appConfig.name}
+    </Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={logoContainer}>
           <div className=" text-4xl text-blue-500 flex items-center space-x-2">
             <LuStethoscope size={50} />
-            <h1>MediLab</h1>
+            <h1>{appConfig.name}</h1>
           </div>
         </Section>
         <Heading style={h1}>Thank you for reaching out to us.</Heading>

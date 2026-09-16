@@ -6,8 +6,8 @@ import prisma from "./prisma";
 import { encryptString, getBaseUrl, staffCredentials } from "./utils";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-
 import { revalidatePath } from "next/cache";
+import { appConfig } from "./config";
 
 export async function createUser(prevState: any, formData: FormData) {
   const emailTraceId = crypto.randomUUID();
@@ -47,11 +47,12 @@ export async function createUser(prevState: any, formData: FormData) {
       const emailPayload = {
         name: `${formData.get("name")?.toString()}`,
         email: `${formData.get("email")?.toString()}`,
-        message: `Welcome ${name?.toString()} to IMEDIC. Your Digital profile has been created. This is your decryption key ${id3}`,
+        message: `Welcome ${name?.toString()} to ${appConfig.name}. Your Digital profile has been created. This is your decryption key ${id3}`,
       };
 
       console.log(`[createUser][${emailTraceId}] email_send_start`, {
         endpoint: `${getBaseUrl()}/api/send`,
+        appName: appConfig.name,
         recipientDomain: emailPayload.email.includes("@")
           ? emailPayload.email.split("@")[1]
           : null,
@@ -188,11 +189,10 @@ export async function adminLogin(prevState: any, formData: FormData) {
 
   const cookieStore = await cookies();
 
-  // Admin credentials (move to env in production)
   const adminCredentials = {
-    email: "admin@imedic.gmail.com",
-    password: "AdminSecure@2024",
-    id: "admin_001",
+    email: appConfig.admin.email,
+    password: appConfig.admin.password,
+    id: appConfig.admin.id,
   };
 
   if (!email || !password) {

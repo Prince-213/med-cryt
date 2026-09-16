@@ -7,6 +7,7 @@ import { links } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { BsClipboardPulse } from "react-icons/bs";
 import LogoutButton from "@/app/admin/(ui)/LogoutButton";
+import { appConfig } from "@/lib/config";
 
 interface SideBarProps {
   userType: "admin" | "staff" | null;
@@ -44,7 +45,9 @@ const SideBar = ({ userType }: SideBarProps) => {
       <div className="flex items-center space-x-5">
         <BsClipboardPulse className="text-cyan-500 w-10 h-10" />
         <div>
-          <h1 className="font-bold text-3xl uppercase text-gray-700">imedic</h1>
+          <h1 className="font-bold text-3xl uppercase text-gray-700">
+            {appConfig.name}
+          </h1>
           <p className="text-sm text-gray-500 capitalize">
             {userType} Dashboard
           </p>
